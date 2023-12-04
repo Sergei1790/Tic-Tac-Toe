@@ -56,14 +56,14 @@ const gameboard = (function () {
 
 
 
-function createPlayer (name) {
-    const token = name + '.token';
+function createPlayer (name,token) {
+    // const token = name + '.token';
     return { name, token };
 }
-const el1 = createPlayer('Elromco 1');
-el1.token = 'x';
-const el2 = createPlayer('Elromco 2');
-el2.token = 'o';
+const el1 = createPlayer('Elromco 1', 'x');
+
+const el2 = createPlayer('Elromco 2', 'o');
+
 
 // console.log(gameboard.gameboard);
 
