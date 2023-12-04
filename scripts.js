@@ -20,13 +20,24 @@ function toggleClassOnClick(elem){
 // }
 const gameboard = (function () {
     const board = [];
+    let i = 1;
     for(let row = 0; row<3; row++){
+     
         board[row]=[];
         for(let col = 0; col<3; col++){
             board[row].push('Cell');
             // board[row].push(Cell());
+
+            const boardCell = document.createElement('div');
+            boardCell.className ='board__cell';
+            boardCell.setAttribute('data-index', i);
+            boardCell.innerText = 'Cell';
+            gameboard1.appendChild(boardCell); 
+            i++;
         }
     }
+    i = 0;
+    console.log(i);
     // return {board};
 
 

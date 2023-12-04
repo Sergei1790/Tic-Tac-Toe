@@ -1,3 +1,35 @@
 body{
     margin: 0;
+    font-family: 'Open Sans', sans-serif;
 }
+.score{
+    font-size: 24px;
+}
+#sund-gameboard{
+    height: 700px;
+    width: 700px;
+    margin: 0 auto;
+    padding: 80px 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.board__cell{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+}
+.board__cell:nth-child(3n + 1){
+   border-left: 0;
+}
+.board__cell:nth-child(3n){
+    border-right: 0;
+}
+.board__cell:nth-child(-n+3){
+    border-top: 0;
+}
+.board__cell:nth-last-child(-n+3){
+    border-bottom: 0;
+}
+
+
