@@ -1,3 +1,18 @@
+function toggleClassOnClick(elem){
+    elem.classList.toggle('active');
+    elem.parentElement.classList.toggle('active')
+}
+
+// 1. Создать игровое поле 3 на 3
+// 2. Создать игрока 1
+// 3. Создать игрока 2
+// 4. Прописати знаки x/0
+// 5. Прописати умови при яких виграє якийсь із знаків
+// 6. Написати код для підрахунку раундів/спроб
+// 7. Прописати кількість раундів необхідних для виграшу
+// 8. Прописати умови нічиї 
+// 9. Прописати умови за яких буде вибрано переможця по закінченню раундів 
+// 10. Стерти історію, почати заново
 // const gameboard = {
 //     gameboard:[null,null,null,
 //         null,null,null,
@@ -9,56 +24,81 @@ const gameboard = (function () {
         board[row]=[];
         for(let col = 0; col<3; col++){
             board[row].push('Cell');
-            board[row].push(Cell());
+            // board[row].push(Cell());
         }
     }
     return {board};
 })();
-console.log(gameboard);
+
+
+
+// console.table(gameboard.board);
+
+
+// let newBoard = gameboard.board;
+// newBoard[chooseRow][chooseCell] = 'X'
+// console.log(newBoard[chooseRow]);
+// newBoard.map(function () {
+//     return 'new Cell';
+// });
+
+
+// let newBoard = gameboard.board.map(function(cell) {
+//     return cell.length;
+// });
+// let newBoard = gameboard.board.map(item => item.length)
+
+// let newBoard = gameboard.board.map(function (row) {
+//     return row.map(function () {
+//         return 'new Cell';
+//     });
+// });
+
+
+
 function createPlayer (name) {
     const token = name + '.token';
     return { name, token };
 }
 const el1 = createPlayer('Elromco 1');
+el1.token = 'x';
 const el2 = createPlayer('Elromco 2');
-console.log({el1});
+el2.token = 'o';
+
 // console.log(gameboard.gameboard);
-function cell(){
-    let value = 0;
 
-    // Accept a player's token to change the value of the cell
-    const addToken = (player) => {
-      value = player;
-    };
-  
-    // How we will retrieve the current value of this cell through closure
-    const getValue = () => value;
-  
-    return {
-      addToken,
-      getValue
-    };
+
+let newBoard = gameboard.board;
+function updateBoard(playerToken){
+    newBoard = newBoard.map(function (row, rowIndex) {
+        if(rowIndex === chooseRow){
+            return row.map(function (cell, cellIndex) {
+                return cellIndex === chooseCell ? playerToken : cell
+            });
+        } else{
+            return row;
+        }
+    });
 }
-const dropToken = (column, player) => {
-    // Our board's outermost array represents the row,
-    // so we need to loop through the rows, starting at row 0,
-    // find all the rows that don't have a token, then take the
-    // last one, which will represent the bottom-most empty cell
-    const availableCells = board.filter((row) => row[column].getValue() === 0).map(row => row[column]);
+// let chooseRow = 1;
+// let chooseCell = 2;
 
-    // If no cells make it through the filter, 
-    // the move is invalid. Stop execution.
-    if (!availableCells.length) return;
+// updateBoard(el1.token)
 
-    // Otherwise, I have a valid cell, the last one in the filtered array
-    const lowestRow = availableCells.length - 1;
-    board[lowestRow][column].addToken(player);
-  };
+// chooseRow = 0;
+// chooseCell = 2;
+// updateBoard(el2.token)
+// console.table(newBoard);
 
-  // This method will be used to print our board to the console.
-  // It is helpful to see what the board looks like after each turn as we play,
-  // but we won't need it after we build our UI
-  const printBoard = () => {
-    const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
-    console.log(boardWithCellValues);
-  };
+let chooseRow;
+let chooseCell;
+
+const gameRound = (function () {
+    chooseRow = +prompt(`${el1.name} chooseRow`);
+    chooseCell = +prompt(`${el1.name} chooseCell`);
+    updateBoard(el1.token);
+    chooseRow = +prompt(`${el2.name} chooseRow`);
+    chooseCell = +prompt(`${el2.name} chooseCell`);
+    updateBoard(el2.token);
+    console.table(newBoard);
+})()
