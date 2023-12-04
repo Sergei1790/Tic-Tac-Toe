@@ -27,7 +27,44 @@ const gameboard = (function () {
             // board[row].push(Cell());
         }
     }
-    return {board};
+    // return {board};
+
+
+
+
+
+    const getBoard = () => board;
+
+    const dropToken = (column, player) => {
+        // Our board's outermost array represents the row,
+        // so we need to loop through the rows, starting at row 0,
+        // find all the rows that don't have a token, then take the
+        // last one, which will represent the bottom-most empty cell
+        const availableCells = board.filter((row) => row[column].getValue() === 'Cell').map(row => row[column]);
+    
+        // If no cells make it through the filter, 
+        // the move is invalid. Stop execution.
+        if (!availableCells.length) return;
+    
+        // Otherwise, I have a valid cell, the last one in the filtered array
+        const lowestRow = availableCells.length - 1;
+        board[lowestRow][column].addToken(player);
+      };
+        // This method will be used to print our board to the console.
+        // It is helpful to see what the board looks like after each turn as we play,
+        // but we won't need it after we build our UI
+        const printBoard = () => {
+            const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
+            console.log(boardWithCellValues);
+        };
+
+        // Here, we provide an interface for the rest of our
+        // application to interact with the board
+        return { getBoard, dropToken, printBoard };
+
+
+        
+    
 })();
 
 
@@ -94,11 +131,15 @@ let chooseRow;
 let chooseCell;
 
 const gameRound = (function () {
-    chooseRow = +prompt(`${el1.name} chooseRow`);
-    chooseCell = +prompt(`${el1.name} chooseCell`);
+    // chooseRow = +prompt(`${el1.name} chooseRow`);
+    // chooseCell = +prompt(`${el1.name} chooseCell`);
+    chooseRow = 0;
+    chooseCell = 1;
     updateBoard(el1.token);
-    chooseRow = +prompt(`${el2.name} chooseRow`);
-    chooseCell = +prompt(`${el2.name} chooseCell`);
+    // chooseRow = +prompt(`${el2.name} chooseRow`);
+    // chooseCell = +prompt(`${el2.name} chooseCell`);
+    chooseRow = 1;
+    chooseCell = 2;
     updateBoard(el2.token);
     console.table(newBoard);
 })()
