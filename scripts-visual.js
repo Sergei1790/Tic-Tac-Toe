@@ -34,7 +34,7 @@ function gameboard() {
         if (!availableCells.length) return;
     
         // Otherwise, I have a valid cell, the last one in the filtered array
-        board[chooseRow][chooseCell].addToken(player);
+        board[chooseRow][chooseCell].addToken(player.token);
       };
         // This method will be used to print our board to the console.
         // It is helpful to see what the board looks like after each turn as we play,
@@ -98,7 +98,7 @@ function GameController() {
         console.log(
             `Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
         );
-        board.dropToken(chooseRow, chooseCell, getActivePlayer().token);
+        board.dropToken(chooseRow, chooseCell, getActivePlayer());
   
       /*  This is where we would check for a winner and handle that logic,
           such as a win message. */
