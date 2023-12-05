@@ -1,4 +1,10 @@
 const gameboard1 = document.querySelector('#sund-gameboard')
+function createPlayer (name,token) {
+    // const token = name + '.token';
+    return { name, token };
+}
+const el1 = createPlayer('Elromco 1', 'x');
+const el2 = createPlayer('Elromco 2', 'o');
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -9,32 +15,27 @@ const gameboard1 = document.querySelector('#sund-gameboard')
 // 8. Прописати умови нічиї 
 // 9. Прописати умови за яких буде вибрано переможця по закінченню раундів 
 // 10. Стерти історію, почати заново
-// const gameboard = {
-//     gameboard:[null,null,null,
-//         null,null,null,
-//         null,null,null]
-// }
+
 const gameboard = (function () {
     const board = [];
-    let i = 1;
+    // let i = 1;
     for(let row = 0; row<3; row++){
      
         board[row]=[];
         for(let col = 0; col<3; col++){
-            board[row].push('Cell');
-            // board[row].push(Cell().getValue());
-            const boardCell = document.createElement('div');
-            boardCell.className ='board__cell';
-            boardCell.setAttribute('data-index', i);
-            boardCell.innerText = Cell().getValue();
-            gameboard1.appendChild(boardCell); 
-            i++;
+            board[row].push(Cell().getValue());
+            // const boardCell = document.createElement('div');
+            // boardCell.className ='board__cell';
+            // boardCell.setAttribute('data-index', i);
+            // boardCell.innerText = Cell().getValue();
+            // gameboard1.appendChild(boardCell); 
+            // i++;
         }
     }
-    i = 0;
+    // i = 0;
     // console.table(board);
     const getBoard = () => board;
-    return { getBoard };
+    return { getBoard};
 
 
 
@@ -42,7 +43,7 @@ const gameboard = (function () {
 
 
 function Cell() {
-    let value = 'Cell';
+    let value = '';
   
     // Accept a player's token to change the value of the cell
     const addToken = (player) => {
@@ -58,17 +59,28 @@ function Cell() {
     };
   }
 
-// console.table(gameboard.board);
 
-function createPlayer (name,token) {
-    // const token = name + '.token';
-    return { name, token };
+let activePlayer = el1;
+function switchPlayer(activePlayer){
+    activePlayer = activePlayer === el1 ? el2 : el1;
+    return activePlayer;
 }
-const el1 = createPlayer('Elromco 1', 'x');
-const el2 = createPlayer('Elromco 2', 'o');
+
+let boardcells = document.querySelectorAll(".board__cell");
+boardcells.forEach(boardcell => {
+    boardcell.addEventListener('click', placeSign);
+});
+
+function placeSign(){
+    if(this.innerText === ''){
+        activePlayer = switchPlayer(activePlayer);
+        this.innerText = activePlayer.token;
+    }
+}
+
 
 let newBoard = gameboard.getBoard();
-console.table(newBoard)
+
 function updateBoard(playerToken){
     newBoard = newBoard.map(function (row, rowIndex) {
         if(rowIndex === chooseRow){
@@ -88,6 +100,9 @@ const gameRound = (function () {
     // chooseCell = +prompt(`${el1.name} chooseCell`);
     chooseRow = 0;
     chooseCell = 1;
+    // let activePlayer = el1;
+    // activePlayer = activePlayer === el1 ? el2 : el1;
+
     updateBoard(el1.token);
     // chooseRow = +prompt(`${el2.name} chooseRow`);
     // chooseCell = +prompt(`${el2.name} chooseCell`);
