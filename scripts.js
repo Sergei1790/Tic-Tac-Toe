@@ -1,10 +1,4 @@
-const gameboard1 = document.querySelector('#sund-gameboard')
-function createPlayer (name,token) {
-    // const token = name + '.token';
-    return { name, token };
-}
-const el1 = createPlayer('Elromco 1', 'x');
-const el2 = createPlayer('Elromco 2', 'o');
+const screenBoard = document.querySelector('#sund-gameboard')
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -16,98 +10,141 @@ const el2 = createPlayer('Elromco 2', 'o');
 // 9. Прописати умови за яких буде вибрано переможця по закінченню раундів 
 // 10. Стерти історію, почати заново
 
-const gameboard = (function () {
-    const board = [];
-    // let i = 1;
-    for(let row = 0; row<3; row++){
-     
-        board[row]=[];
-        for(let col = 0; col<3; col++){
-            board[row].push(Cell().getValue());
-            // const boardCell = document.createElement('div');
-            // boardCell.className ='board__cell';
-            // boardCell.setAttribute('data-index', i);
-            // boardCell.innerText = Cell().getValue();
-            // gameboard1.appendChild(boardCell); 
-            // i++;
+function gameboard() {
+	const board = [];
+	let i = 1;
+	for (let row = 0; row < 3; row++) {
+		board[row] = [];
+		for (let col = 0; col < 3; col++) {
+			board[row].push(Cell());
+			const boardCell = document.createElement('div');
+			boardCell.className ='board__cell';
+			boardCell.setAttribute('data-index', i);
+			boardCell.innerText = Cell().getValue();
+			screenBoard.appendChild(boardCell); 
+			i++;
+		}
+		i = 0;
+	}
+	const getBoard = () => board;
+
+	const dropToken = (chooseRow, chooseCell, player) => {
+		// Our board's outermost array represents the row,
+		// so we need to loop through the rows, starting at row 0,
+		// find all the rows that don't have a token, then take the
+		// last one, which will represent the bottom-most empty cell
+
+		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
+		
+        // If no cells make it through the filter, 
+        // the move is invalid. Stop execution.
+		// if (!availableCells.length) return;
+
+        if(board[chooseRow][chooseCell].getValue() === 'Cell'){
+            board[chooseRow][chooseCell].addToken(player.token);
+        } else {
+            console.log('The selected cell is not empty. Cannot add token.');
         }
-    }
-    // i = 0;
-    // console.table(board);
-    const getBoard = () => board;
-    return { getBoard};
+		// Otherwise, I have a valid cell, the last one in the filtered array
+		// board[chooseRow][chooseCell].addToken(player.token);
+        
+	};
+	// This method will be used to print our board to the console.
+	// It is helpful to see what the board looks like after each turn as we play,
+	// but we won't need it after we build our UI
+	const printBoard = () => {
+		const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
+		console.log(boardWithCellValues);
+	};
 
+	// Here, we provide an interface for the rest of our
+	// application to interact with the board
+	return { getBoard, dropToken, printBoard };
 
-
-})();
-
+}
 
 function Cell() {
-    let value = '';
-  
-    // Accept a player's token to change the value of the cell
-    const addToken = (player) => {
-      value = player.token;
-    };
-  
-    // How we will retrieve the current value of this cell through closure
-    const getValue = () => value;
-  
-    return {
-      addToken,
-      getValue
-    };
-  }
+	let value = 'Cell';
 
+	// Accept a player's token to change the value of the cell
+	const addToken = (player) => {
+		value = player;
+	};
 
-let activePlayer = el1;
-function switchPlayer(activePlayer){
-    activePlayer = activePlayer === el1 ? el2 : el1;
-    return activePlayer;
+	// How we will retrieve the current value of this cell through closure
+	const getValue = () => value;
+
+	return {
+		addToken,
+		getValue
+	};
 }
 
+// console.table(gameboard.board);
+
+function createPlayer(name, token) {
+	// const token = name + '.token';
+	return { name, token };
+}
+const el1 = createPlayer('Elromco 1', 'x');
+const el2 = createPlayer('Elromco 2', 'o');
+
+function GameController() {
+	const board = gameboard();
+	const players = [el1, el2];
+	let activePlayer = players[0];
+
+	const switchPlayerTurn = () => {
+		activePlayer = activePlayer === players[0] ? players[1] : players[0];
+	};
+	const getActivePlayer = () => activePlayer;
+
+	const printNewRound = () => {
+		board.printBoard();
+		console.log(`${getActivePlayer().name}'s turn.`);
+	};
+
+	const playRound = () => {
+		const chooseRow = +prompt(`${getActivePlayer().name} chooseRow`);
+		const chooseCell = +prompt(`${getActivePlayer().name} chooseCell`);
+		// Drop a token for the current player
+		console.log(
+			`Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
+		);
+		board.dropToken(chooseRow, chooseCell, getActivePlayer());
+
+		/*  This is where we would check for a winner and handle that logic,
+			such as a win message. */
+
+		// Switch player turn
+		switchPlayerTurn();
+		printNewRound();
+	};
+
+	// Initial play game message
+	printNewRound();
+	// For the console version, we will only use playRound, but we will need
+	// getActivePlayer for the UI version, so I'm revealing it now
+	return {
+		playRound,
+		getActivePlayer
+	};
+}
+const game = GameController();
+
+// game.playRound();
+// game.playRound();
 let boardcells = document.querySelectorAll(".board__cell");
 boardcells.forEach(boardcell => {
-    boardcell.addEventListener('click', placeSign);
+    boardcell.addEventListener('click', placeToken);
 });
 
-function placeSign(){
-    if(this.innerText === ''){
-        activePlayer = switchPlayer(activePlayer);
-        this.innerText = activePlayer.token;
-    }
+function placeToken(){
+    // game.playRound();
+    // if(this.innerText === ''){
+       
+    //     activePlayer = switchPlayer(activePlayer);
+    //     this.innerText = activePlayer.token;
+    // }
 }
 
-
-let newBoard = gameboard.getBoard();
-
-function updateBoard(playerToken){
-    newBoard = newBoard.map(function (row, rowIndex) {
-        if(rowIndex === chooseRow){
-            return row.map(function (cell, cellIndex) {
-                return cellIndex === chooseCell ? playerToken : cell
-            });
-        } else{
-            return row;
-        }
-    });
-}
-
-
-
-const gameRound = (function () {
-    // chooseRow = +prompt(`${el1.name} chooseRow`);
-    // chooseCell = +prompt(`${el1.name} chooseCell`);
-    chooseRow = 0;
-    chooseCell = 1;
-    // let activePlayer = el1;
-    // activePlayer = activePlayer === el1 ? el2 : el1;
-
-    updateBoard(el1.token);
-    // chooseRow = +prompt(`${el2.name} chooseRow`);
-    // chooseCell = +prompt(`${el2.name} chooseCell`);
-    chooseRow = 1;
-    chooseCell = 2;
-    updateBoard(el2.token);
-    console.table(newBoard);
-})()
