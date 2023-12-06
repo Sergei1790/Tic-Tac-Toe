@@ -20,8 +20,8 @@ const gameboard = (function() {
 	}
 	const getBoard = () => board;
 
-    const dropToken = (chooseRow, chooseCell, player) => {
-	// const dropToken = (selectedCell, player) => {
+    // const dropToken = (chooseRow, chooseCell, player) => {
+	const dropToken = (selectedCell, player) => {
 		// Our board's outermost array represents the row,
 		// so we need to loop through the rows, starting at row 0,
 		// find all the rows that don't have a token, then take the
@@ -98,8 +98,8 @@ const game = (function() {
 	};
 
 	const playRound = (selectedCell) => {
-		const chooseRow = +prompt(`${getActivePlayer().name} chooseRow`);
-		const chooseCell = +prompt(`${getActivePlayer().name} chooseCell`);
+		// const chooseRow = +prompt(`${getActivePlayer().name} chooseRow`);
+		// const chooseCell = +prompt(`${getActivePlayer().name} chooseCell`);
 		// Drop a token for the current player
 		console.log(
 			`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
