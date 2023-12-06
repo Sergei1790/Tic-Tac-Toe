@@ -1,4 +1,3 @@
-const screenBoard = document.querySelector('#sund-gameboard')
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -12,19 +11,19 @@ const screenBoard = document.querySelector('#sund-gameboard')
 
 const gameboard = (function() {
 	const board = [];
-	let i = 1;
+	// let i = 1;
 	for (let row = 0; row < 3; row++) {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
 			board[row].push(Cell());
-			const boardCell = document.createElement('div');
-			boardCell.className ='board__cell';
-			boardCell.setAttribute('data-index', i);
-			boardCell.innerText = Cell().getValue();
-			screenBoard.appendChild(boardCell); 
-			i++;
+			// const boardCell = document.createElement('div');
+			// boardCell.className ='board__cell';
+			// boardCell.setAttribute('data-index', i);
+			// boardCell.innerText = Cell().getValue();
+			// screenBoard.appendChild(boardCell); 
+			// i++;
 		}
-		i = 0;
+		// i = 0;
 	}
 	const getBoard = () => board;
 
@@ -132,19 +131,14 @@ const game = (function() {
 })()
 
 
-game.playRound();
-game.playRound();
-let boardcells = document.querySelectorAll(".board__cell");
-boardcells.forEach(boardcell => {
-    boardcell.addEventListener('click', placeToken);
-});
+// game.playRound();
+// game.playRound();
 
-function placeToken(){
-    // game.playRound();
-    // if(this.innerText === ''){
-       
-    //     activePlayer = switchPlayer(activePlayer);
-    //     this.innerText = activePlayer.token;
-    // }
-}
+const gameScreen = (function(){
+    // gameboard.printBoard();
+    const screenBoard = document.querySelector('#sund-gameboard');
+    const board = gameboard.getBoard();
+    
+})()
+
 
