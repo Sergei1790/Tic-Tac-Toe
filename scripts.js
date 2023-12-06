@@ -16,18 +16,12 @@ const gameboard = (function() {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
 			board[row].push(Cell());
-			// const boardCell = document.createElement('div');
-			// boardCell.className ='board__cell';
-			// boardCell.setAttribute('data-index', i);
-			// boardCell.innerText = Cell().getValue();
-			// screenBoard.appendChild(boardCell); 
-			// i++;
 		}
-		// i = 0;
 	}
 	const getBoard = () => board;
 
-	const dropToken = (chooseRow, chooseCell, player) => {
+    const dropToken = (chooseRow, chooseCell, player) => {
+	// const dropToken = (selectedCell, player) => {
 		// Our board's outermost array represents the row,
 		// so we need to loop through the rows, starting at row 0,
 		// find all the rows that don't have a token, then take the
@@ -103,12 +97,13 @@ const game = (function() {
 		console.log(`${getActivePlayer().name}'s turn.`);
 	};
 
-	const playRound = () => {
+	const playRound = (selectedCell) => {
 		const chooseRow = +prompt(`${getActivePlayer().name} chooseRow`);
 		const chooseCell = +prompt(`${getActivePlayer().name} chooseCell`);
 		// Drop a token for the current player
 		console.log(
-			`Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
+			`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+            // `Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
 		);
 		gameboard.dropToken(chooseRow, chooseCell, getActivePlayer());
 
@@ -137,19 +132,47 @@ const game = (function() {
 const gameScreen = (function(){
     // gameboard.printBoard();
     const screenBoard = document.querySelector('#sund-gameboard');
+    const screenOrder = document.querySelector('.sund-screen__order');
     const board = gameboard.getBoard();
-    console.log(board);
-    board.forEach(row => {
-        row.forEach((cell, index) => {
-            const boardCell = document.createElement('div');
-			boardCell.className ='board__cell';
-			// boardCell.setAttribute('data-index', index);
-            // or
-            boardCell.dataset.index = index;
-			boardCell.innerText = cell.getValue();
-			screenBoard.appendChild(boardCell); 
-        });
-    });
+    const activePlayer = game.getActivePlayer();
+
+    function updateBoard(){
+        screenOrder.innerText = `It is time for ${activePlayer.name}'s turn`;
+
+        // board.forEach((row, rowIndex) => {
+        //     row.forEach((cell, index) => {
+        //         const boardCell = document.createElement('div');
+        //         boardCell.className ='board__cell';
+        //         // boardCell.setAttribute('data-index', index);
+        //         // or
+        //         boardCell.dataset.index = rowIndex + index;
+        //         boardCell.innerText = cell.getValue();
+        //         screenBoard.appendChild(boardCell); 
+        //     });
+        // });
+        board.forEach((row, rowIndex) => {
+            row.forEach((cell, cellIndex) => {
+                const boardCell = document.createElement('div');
+                boardCell.className ='board__cell';
+                // boardCell.setAttribute('data-index', index);
+                // or
+                boardCell.dataset.index = rowIndex * 3 + cellIndex + 1;
+                boardCell.innerText = cell.getValue();
+                screenBoard.appendChild(boardCell); 
+            });
+         });
+    }
+    updateBoard();
+
+    function clickHandler(e){
+        const selectedCell = e.target.dataset.index;
+        console.log(selectedCell.innerText);
+        game.playRound(selectedCell);
+        updateBoard();
+    }
+    screenBoard.addEventListener('click', clickHandler)
+    
+
 })()
 
 

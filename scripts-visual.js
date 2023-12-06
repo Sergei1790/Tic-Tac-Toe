@@ -24,8 +24,8 @@ function gameboard() {
 			// screenBoard.appendChild(boardCell); 
 			// i++;
 		}
-		// i = 0;
 	}
+	// i = 0;
 	const getBoard = () => board;
 
 	const dropToken = (chooseRow, chooseCell, player) => {
@@ -134,7 +134,8 @@ function GameController() {
 // 	const game = GameController();
 // 	const board = game
 // }
-// game.playRound();
-// game.playRound();
+game = GameController()
+game.playRound();
+game.playRound();
 
 

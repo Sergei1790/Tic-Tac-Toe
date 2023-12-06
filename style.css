@@ -5,6 +5,9 @@ body{
 .score{
     font-size: 24px;
 }
+.sund-screen__order{
+    font-size: 24px;
+}
 #sund-gameboard{
     height: 700px;
     width: 700px;
