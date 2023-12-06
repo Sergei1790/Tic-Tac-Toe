@@ -138,7 +138,18 @@ const gameScreen = (function(){
     // gameboard.printBoard();
     const screenBoard = document.querySelector('#sund-gameboard');
     const board = gameboard.getBoard();
-    
+    console.log(board);
+    board.forEach(row => {
+        row.forEach((cell, index) => {
+            const boardCell = document.createElement('div');
+			boardCell.className ='board__cell';
+			// boardCell.setAttribute('data-index', index);
+            // or
+            boardCell.dataset.index = index;
+			boardCell.innerText = cell.getValue();
+			screenBoard.appendChild(boardCell); 
+        });
+    });
 })()
 
 
