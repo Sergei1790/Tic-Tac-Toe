@@ -1,3 +1,4 @@
+const screenBoard = document.querySelector('#sund-gameboard')
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -11,29 +12,42 @@
 
 function gameboard() {
 	const board = [];
+	let i = 1;
 	for (let row = 0; row < 3; row++) {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
-			// board[row].push('Cell');
 			board[row].push(Cell());
+			const boardCell = document.createElement('div');
+			boardCell.className ='board__cell';
+			boardCell.setAttribute('data-index', i);
+			boardCell.innerText = Cell().getValue();
+			screenBoard.appendChild(boardCell); 
+			i++;
 		}
+		i = 0;
 	}
 	const getBoard = () => board;
 
 	const dropToken = (chooseRow, chooseCell, player) => {
-
 		// Our board's outermost array represents the row,
 		// so we need to loop through the rows, starting at row 0,
 		// find all the rows that don't have a token, then take the
 		// last one, which will represent the bottom-most empty cell
-		const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
 
-		// If no cells make it through the filter, 
-		// the move is invalid. Stop execution.
-		if (!availableCells.length) return;
+		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
+		
+        // If no cells make it through the filter, 
+        // the move is invalid. Stop execution.
+		// if (!availableCells.length) return;
 
+        if(board[chooseRow][chooseCell].getValue() === 'Cell'){
+            board[chooseRow][chooseCell].addToken(player.token);
+        } else {
+            console.log('The selected cell is not empty. Cannot add token.');
+        }
 		// Otherwise, I have a valid cell, the last one in the filtered array
-		board[chooseRow][chooseCell].addToken(player.token);
+		// board[chooseRow][chooseCell].addToken(player.token);
+        
 	};
 	// This method will be used to print our board to the console.
 	// It is helpful to see what the board looks like after each turn as we play,
@@ -116,11 +130,21 @@ function GameController() {
 		getActivePlayer
 	};
 }
-
 const game = GameController();
 
+// game.playRound();
+// game.playRound();
+let boardcells = document.querySelectorAll(".board__cell");
+boardcells.forEach(boardcell => {
+    boardcell.addEventListener('click', placeToken);
+});
 
-
-
-
+function placeToken(){
+    // game.playRound();
+    // if(this.innerText === ''){
+       
+    //     activePlayer = switchPlayer(activePlayer);
+    //     this.innerText = activePlayer.token;
+    // }
+}
 

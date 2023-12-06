@@ -10,7 +10,7 @@ const screenBoard = document.querySelector('#sund-gameboard')
 // 9. Прописати умови за яких буде вибрано переможця по закінченню раундів 
 // 10. Стерти історію, почати заново
 
-function gameboard() {
+const gameboard = (function() {
 	const board = [];
 	let i = 1;
 	for (let row = 0; row < 3; row++) {
@@ -61,7 +61,7 @@ function gameboard() {
 	// application to interact with the board
 	return { getBoard, dropToken, printBoard };
 
-}
+})()
 
 function Cell() {
 	let value = 'Cell';
@@ -89,8 +89,8 @@ function createPlayer(name, token) {
 const el1 = createPlayer('Elromco 1', 'x');
 const el2 = createPlayer('Elromco 2', 'o');
 
-function GameController() {
-	const board = gameboard();
+const game = (function() {
+	
 	const players = [el1, el2];
 	let activePlayer = players[0];
 
@@ -100,7 +100,7 @@ function GameController() {
 	const getActivePlayer = () => activePlayer;
 
 	const printNewRound = () => {
-		board.printBoard();
+		gameboard.printBoard();
 		console.log(`${getActivePlayer().name}'s turn.`);
 	};
 
@@ -111,7 +111,7 @@ function GameController() {
 		console.log(
 			`Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
 		);
-		board.dropToken(chooseRow, chooseCell, getActivePlayer());
+		gameboard.dropToken(chooseRow, chooseCell, getActivePlayer());
 
 		/*  This is where we would check for a winner and handle that logic,
 			such as a win message. */
@@ -129,11 +129,11 @@ function GameController() {
 		playRound,
 		getActivePlayer
 	};
-}
-const game = GameController();
+})()
 
-// game.playRound();
-// game.playRound();
+
+game.playRound();
+game.playRound();
 let boardcells = document.querySelectorAll(".board__cell");
 boardcells.forEach(boardcell => {
     boardcell.addEventListener('click', placeToken);
