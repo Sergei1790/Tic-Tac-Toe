@@ -23,7 +23,7 @@ const gameboard = (function() {
 	}
 	const getBoard = () => board;
     // const dropToken = (chooseRow, chooseCell, player) => {
-	const dropToken = (selectedCell, player) => {
+	const dropToken = (pickedCell, player) => {
 		// Our board's outermost array represents the row,
 		// so we need to loop through the rows, starting at row 0,
 		// find all the rows that don't have a token, then take the
@@ -88,7 +88,6 @@ function Cell() {
 	};
 }
 
-// console.table(gameboard.board);
 
 function createPlayer(name, token) {
 	// const token = name + '.token';
@@ -113,7 +112,7 @@ const game = (function() {
 	};
 
 	const playRound = (selectedCell) => {
-		const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
+		const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
 
 		if(pickedCell.cellContent.getValue() === 'Cell'){
             	// Drop a token for the current player
@@ -149,11 +148,9 @@ const game = (function() {
 // game.playRound();
 
 const gameScreen = (function(){
-    // gameboard.printBoard();
     const screenBoard = document.querySelector('#sund-gameboard');
     const screenOrder = document.querySelector('.sund-screen__order');
    
-
     function updateBoard(){
        
 		screenBoard.textContent = "";
@@ -178,9 +175,7 @@ const gameScreen = (function(){
 
     function clickHandler(e){
         const selectedCell = e.target.dataset.index;
-        console.log(selectedCell);
         game.playRound(selectedCell);
-		// if(selectedCell !==)
         updateBoard();
     }
     screenBoard.addEventListener('click', clickHandler)
