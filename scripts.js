@@ -15,11 +15,13 @@ const gameboard = (function() {
 	for (let row = 0; row < 3; row++) {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
-			board[row].push(Cell());
+			board[row].push({
+				cellContent:Cell(),
+				cellIndex: row * 3 + col + 1,
+			});
 		}
 	}
 	const getBoard = () => board;
-
     // const dropToken = (chooseRow, chooseCell, player) => {
 	const dropToken = (selectedCell, player) => {
 		// Our board's outermost array represents the row,
@@ -29,15 +31,28 @@ const gameboard = (function() {
 
 		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
 		
+		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
+
+
         // If no cells make it through the filter, 
         // the move is invalid. Stop execution.
 		// if (!availableCells.length) return;
 
-        if(board[chooseRow][chooseCell].getValue() === 'Cell'){
-            board[chooseRow][chooseCell].addToken(player.token);
-        } else {
-            console.log('The selected cell is not empty. Cannot add token.');
-        }
+		pickedCell.cellContent.addToken(player.token);
+
+		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
+	
+		// if(pickedCell.cellContent.getValue() === 'Cell'){
+        //     pickedCell.cellContent.addToken(player.token);
+        // } else {
+        //     console.log('The selected cell is not empty. Cannot add token.');
+        // }
+
+        // if(board[chooseRow][chooseCell].getValue() === 'Cell'){
+        //     board[chooseRow][chooseCell].addToken(player.token);
+        // } else {
+        //     console.log('The selected cell is not empty. Cannot add token.');
+        // }
 		// Otherwise, I have a valid cell, the last one in the filtered array
 		// board[chooseRow][chooseCell].addToken(player.token);
         
@@ -46,7 +61,7 @@ const gameboard = (function() {
 	// It is helpful to see what the board looks like after each turn as we play,
 	// but we won't need it after we build our UI
 	const printBoard = () => {
-		const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
+		const boardWithCellValues = board.map((row) => row.map((cell) => cell.cellContent.getValue()))
 		console.log(boardWithCellValues);
 	};
 
@@ -98,21 +113,25 @@ const game = (function() {
 	};
 
 	const playRound = (selectedCell) => {
-		// const chooseRow = +prompt(`${getActivePlayer().name} chooseRow`);
-		// const chooseCell = +prompt(`${getActivePlayer().name} chooseCell`);
-		// Drop a token for the current player
-		console.log(
-			`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
-            // `Dropping ${getActivePlayer().name}'s token into cell with coordinates ${chooseRow} ${chooseCell}...`
-		);
-		gameboard.dropToken(chooseRow, chooseCell, getActivePlayer());
+		const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
 
-		/*  This is where we would check for a winner and handle that logic,
-			such as a win message. */
+		if(pickedCell.cellContent.getValue() === 'Cell'){
+            	// Drop a token for the current player
+				console.log(
+					`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+				);
+				gameboard.dropToken(pickedCell, getActivePlayer());
 
-		// Switch player turn
-		switchPlayerTurn();
-		printNewRound();
+				/*  This is where we would check for a winner and handle that logic,
+					such as a win message. */
+
+				// Switch player turn
+				switchPlayerTurn();
+				printNewRound();
+
+        } else {
+            console.log('The selected cell is not empty. Cannot add token.');
+        }
 	};
 
 	// Initial play game message
@@ -133,31 +152,24 @@ const gameScreen = (function(){
     // gameboard.printBoard();
     const screenBoard = document.querySelector('#sund-gameboard');
     const screenOrder = document.querySelector('.sund-screen__order');
-    const board = gameboard.getBoard();
-    const activePlayer = game.getActivePlayer();
+   
 
     function updateBoard(){
-        screenOrder.innerText = `It is time for ${activePlayer.name}'s turn`;
+       
+		screenBoard.textContent = "";
 
-        // board.forEach((row, rowIndex) => {
-        //     row.forEach((cell, index) => {
-        //         const boardCell = document.createElement('div');
-        //         boardCell.className ='board__cell';
-        //         // boardCell.setAttribute('data-index', index);
-        //         // or
-        //         boardCell.dataset.index = rowIndex + index;
-        //         boardCell.innerText = cell.getValue();
-        //         screenBoard.appendChild(boardCell); 
-        //     });
-        // });
-        board.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
+		const board = gameboard.getBoard();
+		const activePlayer = game.getActivePlayer();
+		screenOrder.innerText = `It is time for ${activePlayer.name}'s turn`;
+
+        board.forEach(row => {
+            row.forEach(cell => {
                 const boardCell = document.createElement('div');
                 boardCell.className ='board__cell';
                 // boardCell.setAttribute('data-index', index);
                 // or
-                boardCell.dataset.index = rowIndex * 3 + cellIndex + 1;
-                boardCell.innerText = cell.getValue();
+                boardCell.dataset.index = cell.cellIndex;
+                boardCell.innerText = cell.cellContent.getValue();
                 screenBoard.appendChild(boardCell); 
             });
          });
@@ -166,8 +178,9 @@ const gameScreen = (function(){
 
     function clickHandler(e){
         const selectedCell = e.target.dataset.index;
-        console.log(selectedCell.innerText);
+        console.log(selectedCell);
         game.playRound(selectedCell);
+		// if(selectedCell !==)
         updateBoard();
     }
     screenBoard.addEventListener('click', clickHandler)
