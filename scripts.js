@@ -22,39 +22,30 @@ const gameboard = (function() {
 		}
 	}
 	const getBoard = () => board;
-    // const dropToken = (chooseRow, chooseCell, player) => {
-	const dropToken = (pickedCell, player) => {
-		// Our board's outermost array represents the row,
-		// so we need to loop through the rows, starting at row 0,
-		// find all the rows that don't have a token, then take the
-		// last one, which will represent the bottom-most empty cell
 
-		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
+	const dropToken = (selectedCell, player) => {
+	// const dropToken = (pickedCell, player) => {
+	// 	pickedCell.cellContent.addToken(player.token);
 		
-		// const availableCells = board.filter((row) => row[chooseCell].getValue() === 'Cell').map(row => row[chooseCell]);
+			
+		const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
 
+		if(pickedCell.cellContent.getValue() === ''){
+			pickedCell.cellContent.addToken(player.token);
+		}  else {
+			console.log('The selected cell is not empty. Cannot add token.');
+			return 1;
+		}
 
-        // If no cells make it through the filter, 
-        // the move is invalid. Stop execution.
-		// if (!availableCells.length) return;
+		const availableCells = board.flat().filter((cell) => cell.cellContent.getValue() === '');
+		console.log('availableCells', availableCells);
 
-		pickedCell.cellContent.addToken(player.token);
-
-		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
-	
-		// if(pickedCell.cellContent.getValue() === 'Cell'){
-        //     pickedCell.cellContent.addToken(player.token);
-        // } else {
-        //     console.log('The selected cell is not empty. Cannot add token.');
-        // }
-
-        // if(board[chooseRow][chooseCell].getValue() === 'Cell'){
-        //     board[chooseRow][chooseCell].addToken(player.token);
-        // } else {
-        //     console.log('The selected cell is not empty. Cannot add token.');
-        // }
-		// Otherwise, I have a valid cell, the last one in the filtered array
-		// board[chooseRow][chooseCell].addToken(player.token);
+		if(!availableCells.length){
+			console.log('No more available cells');
+			return 1;
+		}
+		
+     
         
 	};
 	// This method will be used to print our board to the console.
@@ -72,7 +63,7 @@ const gameboard = (function() {
 })()
 
 function Cell() {
-	let value = 'Cell';
+	let value = '';
 
 	// Accept a player's token to change the value of the cell
 	const addToken = (player) => {
@@ -112,25 +103,40 @@ const game = (function() {
 	};
 
 	const playRound = (selectedCell) => {
-		const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
 
-		if(pickedCell.cellContent.getValue() === 'Cell'){
-            	// Drop a token for the current player
-				console.log(
-					`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
-				);
-				gameboard.dropToken(pickedCell, getActivePlayer());
+		if(gameboard.dropToken(selectedCell, getActivePlayer()) !== 1){
+			console.log(
+				`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+			);
+			console.log('dropToken executed');
+			switchPlayerTurn();
+			printNewRound();
+		} else{
+			console.log('dropToken NOT executed');
+		}
 
-				/*  This is where we would check for a winner and handle that logic,
-					such as a win message. */
 
-				// Switch player turn
-				switchPlayerTurn();
-				printNewRound();
+		
+		// const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
+		// const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
+		// console.log('availableCells', availableCells);
+		// if(pickedCell.cellContent.getValue() === ''){
+        //     	// Drop a token for the current player
+		// 		console.log(
+		// 			`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+		// 		);
+		// 		gameboard.dropToken(pickedCell, getActivePlayer());
+		// 		/*  This is where we would check for a winner and handle that logic,
+		// 			such as a win message. */
 
-        } else {
-            console.log('The selected cell is not empty. Cannot add token.');
-        }
+		// 		// Switch player turn
+		// 		switchPlayerTurn();
+		// 		printNewRound();
+        // } else if(!availableCells.length){
+        //     console.log('No more available cells');
+        // } else {
+        //     console.log('The selected cell is not empty. Cannot add token.');
+        // }
 	};
 
 	// Initial play game message
