@@ -144,9 +144,6 @@ const game = (function() {
 })()
 
 
-// game.playRound();
-// game.playRound();
-
 const gameScreen = (function(){
     const screenBoard = document.querySelector('#sund-gameboard');
     const screenOrder = document.querySelector('.sund-screen__order');
