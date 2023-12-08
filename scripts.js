@@ -55,7 +55,7 @@ const gameboard = (function() {
 	const printBoard = () => {
 		const boardWithCellValues = board.map((row) => row.map((cell) => cell.cellContent.getValue()))
 		console.log(boardWithCellValues);
-	};
+	}; 
 
 	const clearBoard = () => {
 		board.forEach(row => {
