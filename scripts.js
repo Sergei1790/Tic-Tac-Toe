@@ -23,27 +23,28 @@ const gameboard = (function() {
 	}
 	const getBoard = () => board;
 
-	const dropToken = (selectedCell, player) => {
-	// const dropToken = (pickedCell, player) => {
-	// 	pickedCell.cellContent.addToken(player.token);
+	// const dropToken = (selectedCell, player) => {
+	const dropToken = (pickedCell, player) => {
+		pickedCell.cellContent.addToken(player.token);
 		
 			
-		const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
+		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
 
-		if(pickedCell.cellContent.getValue() === ''){
-			pickedCell.cellContent.addToken(player.token);
-		}  else {
-			console.log('The selected cell is not empty. Cannot add token.');
-			return 1;
-		}
+		// if(pickedCell.cellContent.getValue() === ''){
+		// 	pickedCell.cellContent.addToken(player.token);
+		// }  else {
+		// 	console.log('The selected cell is not empty. Cannot add token.');
+		// 	return 1;
+		// }
 
-		const availableCells = board.flat().filter((cell) => cell.cellContent.getValue() === '');
-		console.log('availableCells', availableCells);
+		// const availableCells = board.flat().filter((cell) => cell.cellContent.getValue() === '');
+		// console.log('availableCells', availableCells);
 
-		if(!availableCells.length){
-			console.log('No more available cells');
-			return 1;
-		}
+		// if(!availableCells.length){
+		// 	console.log('No more available cells');
+
+		// 	return 1;
+		// }
 		
      
         
@@ -56,9 +57,16 @@ const gameboard = (function() {
 		console.log(boardWithCellValues);
 	};
 
+	const clearBoard = () => {
+		board.forEach(row => {
+			row.forEach(cell => {
+				cell.cellContent = Cell(); // Reset cell content to a new Cell instance
+			});
+		});
+	};
 	// Here, we provide an interface for the rest of our
 	// application to interact with the board
-	return { getBoard, dropToken, printBoard };
+	return { getBoard, dropToken, printBoard, clearBoard };
 
 })()
 
@@ -86,7 +94,6 @@ function createPlayer(name, token) {
 }
 const el1 = createPlayer('Elromco 1', 'x');
 const el2 = createPlayer('Elromco 2', 'o');
-
 const game = (function() {
 	
 	const players = [el1, el2];
@@ -97,6 +104,32 @@ const game = (function() {
 	};
 	const getActivePlayer = () => activePlayer;
 
+	const endGame = () => {
+        console.log('Game ended...');
+        const endgameModal = document.createElement('div');
+		endgameModal.className = 'sund-game-end';
+		const endgameText = document.createElement('div');
+		endgameText.className = 'sund-game-end__text';
+		endgameText.innerText = 'Game Ended!'
+		const endgameRestart = document.createElement('button');
+		endgameRestart.className = 'sund-game-end__restart';
+		endgameRestart.innerText = 'Restart!';
+		document.body.appendChild(endgameModal);
+		endgameModal.append(endgameText, endgameRestart);
+		endgameRestart.addEventListener('click', () => {
+			document.body.removeChild(endgameModal);
+			restartGame(); 
+		});
+    };
+
+	const restartGame = () => {
+        console.log('Restarting the game...');
+        activePlayer = players[0];
+        gameboard.clearBoard();
+        gameScreen.updateBoard();
+        printNewRound();
+    };
+
 	const printNewRound = () => {
 		gameboard.printBoard();
 		console.log(`${getActivePlayer().name}'s turn.`);
@@ -104,39 +137,45 @@ const game = (function() {
 
 	const playRound = (selectedCell) => {
 
-		if(gameboard.dropToken(selectedCell, getActivePlayer()) !== 1){
-			console.log(
-				`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
-			);
-			console.log('dropToken executed');
-			switchPlayerTurn();
-			printNewRound();
-		} else{
-			console.log('dropToken NOT executed');
-		}
+		// if(gameboard.dropToken(selectedCell, getActivePlayer()) !== 1){
+		// 	console.log(
+		// 		`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+		// 	);
+		// 	console.log('dropToken executed');
+		// 	switchPlayerTurn();
+		// 	printNewRound();
+		// } else{
+		// 	console.log('dropToken NOT executed');
+		// }
 
 
 		
-		// const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
-		// const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
-		// console.log('availableCells', availableCells);
-		// if(pickedCell.cellContent.getValue() === ''){
-        //     	// Drop a token for the current player
-		// 		console.log(
-		// 			`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
-		// 		);
-		// 		gameboard.dropToken(pickedCell, getActivePlayer());
-		// 		/*  This is where we would check for a winner and handle that logic,
-		// 			such as a win message. */
+		
+		const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
+	
+		if(pickedCell.cellContent.getValue() === ''){
+            	// Drop a token for the current player
+				console.log(
+					`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
+				);
+				gameboard.dropToken(pickedCell, getActivePlayer());
+				/*  This is where we would check for a winner and handle that logic,
+					such as a win message. */
 
-		// 		// Switch player turn
-		// 		switchPlayerTurn();
-		// 		printNewRound();
-        // } else if(!availableCells.length){
-        //     console.log('No more available cells');
-        // } else {
-        //     console.log('The selected cell is not empty. Cannot add token.');
-        // }
+				// Switch player turn
+				switchPlayerTurn();
+				printNewRound();
+        } else {
+            console.log('The selected cell is not empty. Cannot add token.');
+        }
+
+
+		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
+		console.log('availableCells', availableCells.length);
+		if(!availableCells.length){
+			console.log('No more available cells');
+			endGame();
+		}
 	};
 
 	// Initial play game message
@@ -145,16 +184,21 @@ const game = (function() {
 	// getActivePlayer for the UI version, so I'm revealing it now
 	return {
 		playRound,
-		getActivePlayer
+		getActivePlayer,
+		endGame,
+		restartGame
 	};
 })()
 
+const winConditions = function(){
+
+}
 
 const gameScreen = (function(){
     const screenBoard = document.querySelector('#sund-gameboard');
     const screenOrder = document.querySelector('.sund-screen__order');
    
-    function updateBoard(){
+    const updateBoard = function(){
        
 		screenBoard.textContent = "";
 
@@ -183,7 +227,7 @@ const gameScreen = (function(){
     }
     screenBoard.addEventListener('click', clickHandler)
     
-
+	return {updateBoard}
 })()
 
 
