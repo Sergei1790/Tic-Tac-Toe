@@ -27,7 +27,7 @@ const gameboard = (function() {
 	const dropToken = (pickedCell, player) => {
 		pickedCell.cellContent.addToken(player.token);
 		player.pickedCellsHistory.push(pickedCell.cellIndex);
-		console.log(player.name, 'player.pickedCellsHistory ', player.pickedCellsHistory);
+		// console.log(player.name, 'player.pickedCellsHistory ', player.pickedCellsHistory);
 
 
 		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
@@ -164,19 +164,22 @@ const game = (function() {
 				/*  This is where we would check for a winner and handle that logic,
 					such as a win message. */
 
+				const winConditions = ['123', '456', '789', '147', '258', '369', '159', '357'];
+				console.log(getActivePlayer().name, 'player.pickedCellsHistory ', getActivePlayer().pickedCellsHistory);
+				pickedCellsHistorySorted = getActivePlayer().pickedCellsHistory.sort(function(a, b) { return a - b; }).join('');
+				console.log({pickedCellsHistorySorted});
+				for (let winCondition of winConditions) {
+					if(winCondition === pickedCellsHistorySorted) {
+						console.log('WIIIIIIIIIIIIIIIIN!');
+					}
+				}
+
 				// Switch player turn
 				switchPlayerTurn();
 				printNewRound();
         } else {
             console.log('The selected cell is not empty. Cannot add token.');
         }
-		const winConditions = [123, 456, 789, 147, 258, 369, 159, 357];
-		winConditions.forEach((winCell) => {
-			console.log({winCell});
-			if(winCell === getActivePlayer().pickedCellsHistory) {
-				console.log('WIIIIIIIIIIIIIIIIN!');
-			}
-		});
 
 		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
 		console.log('availableCells', availableCells.length);
