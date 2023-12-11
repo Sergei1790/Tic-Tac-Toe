@@ -1,4 +1,6 @@
 const round = document.querySelector('#round');
+const player1Score = document.querySelector('#player1-score');
+const player2Score = document.querySelector('#player2-score');
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -175,8 +177,12 @@ const game = (function() {
 				for (let winCondition of winConditions) {
 					if(winCondition === pickedCellsHistorySorted) {
 						console.log('WIIIIIIIIIIIIIIIIN!');
-						Number(round.textContent);
 						round.textContent = (parseInt(round.textContent, 10) + 1); 
+
+						const scoreElement = activePlayer === players[0] ? player1Score : player2Score;
+
+						scoreElement.textContent = (parseInt(scoreElement.textContent, 10) + 1);
+
 						endGame();
 					}
 				}
