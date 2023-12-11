@@ -1,20 +1,12 @@
+// Making variables for the screens
 const round = document.querySelector('#round');
 const player1Score = document.querySelector('#player1-score');
 const player2Score = document.querySelector('#player2-score');
-// 1. Создать игровое поле 3 на 3
-// 2. Создать игрока 1
-// 3. Создать игрока 2
-// 4. Прописати знаки x/0
-// 5. Прописати умови при яких виграє якийсь із знаків
-// 6. Написати код для підрахунку раундів/спроб
-// 7. Прописати кількість раундів необхідних для виграшу
-// 8. Прописати умови нічиї 
-// 9. Прописати умови за яких буде вибрано переможця по закінченню раундів 
-// 10. Стерти історію, почати заново
 
+// gameboard module pattern (factory function in IIFE (Immediately Invoked Function Expression))
 const gameboard = (function() {
+	// creating 2d board array
 	const board = [];
-	// let i = 1;
 	for (let row = 0; row < 3; row++) {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
@@ -24,6 +16,8 @@ const gameboard = (function() {
 			});
 		}
 	}
+
+	// Closure to use board variable in another funcions
 	const getBoard = () => board;
 
 	// const dropToken = (selectedCell, player) => {
@@ -74,6 +68,8 @@ const gameboard = (function() {
 	return { getBoard, dropToken, printBoard, clearBoard };
 
 })()
+// /gameboard module pattern
+
 
 function Cell() {
 	let value = '';
