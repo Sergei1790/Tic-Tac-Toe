@@ -26,8 +26,10 @@ const gameboard = (function() {
 	// const dropToken = (selectedCell, player) => {
 	const dropToken = (pickedCell, player) => {
 		pickedCell.cellContent.addToken(player.token);
-		
-			
+		player.pickedCellsHistory.push(pickedCell.cellIndex);
+		console.log(player.name, 'player.pickedCellsHistory ', player.pickedCellsHistory);
+
+
 		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
 
 		// if(pickedCell.cellContent.getValue() === ''){
@@ -88,12 +90,12 @@ function Cell() {
 }
 
 
-function createPlayer(name, token) {
+function createPlayer(name, token, pickedCellsHistory) {
 	// const token = name + '.token';
-	return { name, token };
+	return { name, token, pickedCellsHistory};
 }
-const el1 = createPlayer('Elromco 1', 'x');
-const el2 = createPlayer('Elromco 2', 'o');
+const el1 = createPlayer('Elromco 1', 'x', []);
+const el2 = createPlayer('Elromco 2', 'o', []);
 const game = (function() {
 	
 	const players = [el1, el2];
@@ -168,10 +170,20 @@ const game = (function() {
         } else {
             console.log('The selected cell is not empty. Cannot add token.');
         }
-
+		const winConditions = [123, 456, 789, 147, 258, 369, 159, 357];
+		winConditions.forEach((winCell) => {
+			console.log({winCell});
+			if(winCell === getActivePlayer().pickedCellsHistory) {
+				console.log('WIIIIIIIIIIIIIIIIN!');
+			}
+		});
 
 		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
 		console.log('availableCells', availableCells.length);
+		// const wCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === 'x');
+		// wCells.forEach((cell) => {
+		// 	console.log('cellIndex', cell.cellIndex);
+		// });
 		if(!availableCells.length){
 			console.log('No more available cells');
 			endGame();
@@ -190,9 +202,11 @@ const game = (function() {
 	};
 })()
 
-const winConditions = function(){
-
-}
+// const winConditions = function(){
+// 	// if(gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === 'x'))
+	
+	
+// }
 
 const gameScreen = (function(){
     const screenBoard = document.querySelector('#sund-gameboard');
