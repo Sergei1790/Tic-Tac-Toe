@@ -1,3 +1,4 @@
+const round = document.querySelector('#round');
 // 1. Создать игровое поле 3 на 3
 // 2. Создать игрока 1
 // 3. Создать игрока 2
@@ -129,6 +130,9 @@ const game = (function() {
         activePlayer = players[0];
         gameboard.clearBoard();
         gameScreen.updateBoard();
+		players.forEach(player => {
+			player.pickedCellsHistory = [];
+		});
         printNewRound();
     };
 
@@ -171,6 +175,9 @@ const game = (function() {
 				for (let winCondition of winConditions) {
 					if(winCondition === pickedCellsHistorySorted) {
 						console.log('WIIIIIIIIIIIIIIIIN!');
+						Number(round.textContent);
+						round.textContent = (parseInt(round.textContent, 10) + 1); 
+						endGame();
 					}
 				}
 
