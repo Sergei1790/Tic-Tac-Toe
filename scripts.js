@@ -90,12 +90,12 @@ function Cell() {
 }
 
 
-function createPlayer(name, token, pickedCellsHistory) {
-	// const token = name + '.token';
+function createPlayer(name, token) {
+	const pickedCellsHistory = [];
 	return { name, token, pickedCellsHistory};
 }
-const el1 = createPlayer('Elromco 1', 'x', []);
-const el2 = createPlayer('Elromco 2', 'o', []);
+const el1 = createPlayer('Elromco 1', 'x');
+const el2 = createPlayer('Elromco 2', 'o');
 const game = (function() {
 	
 	const players = [el1, el2];
@@ -183,10 +183,6 @@ const game = (function() {
 
 		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
 		console.log('availableCells', availableCells.length);
-		// const wCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === 'x');
-		// wCells.forEach((cell) => {
-		// 	console.log('cellIndex', cell.cellIndex);
-		// });
 		if(!availableCells.length){
 			console.log('No more available cells');
 			endGame();
@@ -205,11 +201,6 @@ const game = (function() {
 	};
 })()
 
-// const winConditions = function(){
-// 	// if(gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === 'x'))
-	
-	
-// }
 
 const gameScreen = (function(){
     const screenBoard = document.querySelector('#sund-gameboard');
