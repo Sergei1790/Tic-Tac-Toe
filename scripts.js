@@ -20,33 +20,11 @@ const gameboard = (function() {
 	// Closure to use board variable in another funcions
 	const getBoard = () => board;
 
-	// const dropToken = (selectedCell, player) => {
+	// adding 'x' or 'o', depending on player
 	const dropToken = (pickedCell, player) => {
 		pickedCell.cellContent.addToken(player.token);
 		player.pickedCellsHistory.push(pickedCell.cellIndex);
-		// console.log(player.name, 'player.pickedCellsHistory ', player.pickedCellsHistory);
 
-
-		// const pickedCell = board.flat().find((cell) => cell.cellIndex == selectedCell);
-
-		// if(pickedCell.cellContent.getValue() === ''){
-		// 	pickedCell.cellContent.addToken(player.token);
-		// }  else {
-		// 	console.log('The selected cell is not empty. Cannot add token.');
-		// 	return 1;
-		// }
-
-		// const availableCells = board.flat().filter((cell) => cell.cellContent.getValue() === '');
-		// console.log('availableCells', availableCells);
-
-		// if(!availableCells.length){
-		// 	console.log('No more available cells');
-
-		// 	return 1;
-		// }
-		
-     
-        
 	};
 	// This method will be used to print our board to the console.
 	// It is helpful to see what the board looks like after each turn as we play,
