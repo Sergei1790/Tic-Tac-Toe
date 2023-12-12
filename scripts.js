@@ -21,10 +21,16 @@ const gameboard = (function() {
 	const getBoard = () => board;
 
 	// adding 'x' or 'o', depending on player
+	// pickedCell is cell with corresponding cell.cellIndex
+	// player - current player object
 	const dropToken = (pickedCell, player) => {
 		pickedCell.cellContent.addToken(player.token);
+
+		// We are adding corresponding cell.cellIndex to player object in order 
+		// to save history of his turn to check if he win or not after last 'x' or 'o' placement
 		player.pickedCellsHistory.push(pickedCell.cellIndex);
 	};
+
 	// This method will be used to print our board to the console.
 	// It is helpful to see what the board looks like after each turn as we play,
 	// but we won't need it after we build our UI
@@ -89,31 +95,55 @@ const game = (function() {
 		console.log(`${getActivePlayer().name}'s turn.`);
 	};
 
+	// Here
+	// when clicking on gameboard html cell on screen we catch data-index number (data-index="1")
+	// this data-index of (for example cell with data-index="1" will send selectedCell - "1")
+	// into playround ((1) for example)
 	const playRound = (selectedCell) => {
 
+		// We create pickedCell cariable which takes gameboard board object
+		// this 2d object we transform in 1d(flat()), then we find cell 
+		// with cellIndex that = selectedCell
 		const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
 	
+		// if cell is empty, so nobody place 'x' or 'o' there  
+		// we are adding 'x' or 'o', depending on a player
 		if(pickedCell.cellContent.getValue() === ''){
             	// Drop a token for the current player
 				console.log(
 					`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
 				);
-				gameboard.dropToken(pickedCell, getActivePlayer());
-				/*  This is where we would check for a winner and handle that logic,
-					such as a win message. */
 
+				gameboard.dropToken(pickedCell, getActivePlayer());
+
+
+				// after we dropToken (added 'x' or 'o'), we are creating winconditions logic
+				// '123' here is winning indexes of cells 
+				// 123
+				// 456
+				// 789 (this 3 rows is a board)
 				const winConditions = ['123', '456', '789', '147', '258', '369', '159', '357'];
 				console.log(getActivePlayer().name, 'player.pickedCellsHistory ', getActivePlayer().pickedCellsHistory);
+
+				// as player can drop token not in format 1-2-3, but also 2-1-3 or 3-1-2 etc
+				// we sort pickedCellsHistory from less to more (2-1-3 or 3-1-2 will be sorted to 1-2-3)
 				pickedCellsHistorySorted = getActivePlayer().pickedCellsHistory.sort(function(a, b) { return a - b; }).join('');
 				console.log({pickedCellsHistorySorted});
+
+				// checking if pickedCellsHistory = winConditions and if player won or continue game
 				for (let winCondition of winConditions) {
 					if(winCondition === pickedCellsHistorySorted) {
 						console.log('WIIIIIIIIIIIIIIIIN!');
-						round.textContent = (parseInt(round.textContent, 10) + 1); 
 
+						// increasing number of game rounds on the screen div#round
+						round.textContent++; 
+						// or -  round.textContent = (parseInt(round.textContent, 10) + 1); 
+
+						// checking what player won and adding his win to corresponding win span
 						const scoreElement = activePlayer === players[0] ? player1Score : player2Score;
 
-						scoreElement.textContent = (parseInt(scoreElement.textContent, 10) + 1);
+						scoreElement.textContent++;
+						// or - scoreElement.textContent = (parseInt(scoreElement.textContent, 10) + 1);
 
 						endGame();
 					}
@@ -122,14 +152,20 @@ const game = (function() {
 				// Switch player turn
 				switchPlayerTurn();
 				printNewRound();
+
+		// if we are trying to add 'x' or 'o' where there is already 'x' or 'o' 
+		// do not execute droptoken and not switch turn
         } else {
             console.log('The selected cell is not empty. Cannot add token.');
         }
 
+		// Checking if there any cell where we can place' x' or 'o'
+		// if no more availableCells - finish the game
 		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
 		console.log('availableCells', availableCells.length);
 		if(!availableCells.length){
 			console.log('No more available cells');
+			round.textContent++; 
 			endGame();
 		}
 		
