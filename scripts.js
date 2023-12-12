@@ -11,8 +11,8 @@ const gameboard = (function() {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
 			board[row].push({
-				cellContent:Cell(),
-				cellIndex: row * 3 + col + 1,
+				cellContent:cell(),
+				cellIndex: row * 3 + col + 1, // formula to make cellindex 1,2,3,4,5....
 			});
 		}
 	}
@@ -24,7 +24,6 @@ const gameboard = (function() {
 	const dropToken = (pickedCell, player) => {
 		pickedCell.cellContent.addToken(player.token);
 		player.pickedCellsHistory.push(pickedCell.cellIndex);
-
 	};
 	// This method will be used to print our board to the console.
 	// It is helpful to see what the board looks like after each turn as we play,
@@ -37,19 +36,18 @@ const gameboard = (function() {
 	const clearBoard = () => {
 		board.forEach(row => {
 			row.forEach(cell => {
-				cell.cellContent = Cell(); // Reset cell content to a new Cell instance
+				cell.cellContent = cell(); // Reset cell content to a new Cell instance
 			});
 		});
 	};
-	// Here, we provide an interface for the rest of our
-	// application to interact with the board
+
 	return { getBoard, dropToken, printBoard, clearBoard };
 
 })()
 // /gameboard module pattern
 
-
-function Cell() {
+// adding this cell func into board
+function cell() {
 	let value = '';
 
 	// Accept a player's token to change the value of the cell
@@ -66,13 +64,15 @@ function Cell() {
 	};
 }
 
-
+// Factory function to creat player
 function createPlayer(name, token) {
 	const pickedCellsHistory = [];
 	return { name, token, pickedCellsHistory};
 }
 const el1 = createPlayer('Elromco 1', 'x');
 const el2 = createPlayer('Elromco 2', 'o');
+
+
 const game = (function() {
 	
 	const players = [el1, el2];
@@ -81,6 +81,7 @@ const game = (function() {
 	const switchPlayerTurn = () => {
 		activePlayer = activePlayer === players[0] ? players[1] : players[0];
 	};
+
 	const getActivePlayer = () => activePlayer;
 
 	const endGame = () => {
