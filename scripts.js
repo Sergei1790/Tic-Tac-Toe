@@ -11,7 +11,7 @@ const gameboard = (function() {
 		board[row] = [];
 		for (let col = 0; col < 3; col++) {
 			board[row].push({
-				cellContent:cell(),
+				cellContent:Cell(),
 				cellIndex: row * 3 + col + 1, // formula to make cellindex 1,2,3,4,5....
 			});
 		}
@@ -36,7 +36,7 @@ const gameboard = (function() {
 	const clearBoard = () => {
 		board.forEach(row => {
 			row.forEach(cell => {
-				cell.cellContent = cell(); // Reset cell content to a new Cell instance
+				cell.cellContent = Cell(); // Reset cell content to a new Cell instance
 			});
 		});
 	};
@@ -46,8 +46,8 @@ const gameboard = (function() {
 })()
 // /gameboard module pattern
 
-// adding this cell func into board
-function cell() {
+// adding this Cell func into board
+function Cell() {
 	let value = '';
 
 	// Accept a player's token to change the value of the cell
@@ -64,7 +64,7 @@ function cell() {
 	};
 }
 
-// Factory function to creat player
+// Factory function to create player
 function createPlayer(name, token) {
 	const pickedCellsHistory = [];
 	return { name, token, pickedCellsHistory};
@@ -72,7 +72,7 @@ function createPlayer(name, token) {
 const el1 = createPlayer('Elromco 1', 'x');
 const el2 = createPlayer('Elromco 2', 'o');
 
-
+// game module pattern
 const game = (function() {
 	
 	const players = [el1, el2];
@@ -84,35 +84,6 @@ const game = (function() {
 
 	const getActivePlayer = () => activePlayer;
 
-	const endGame = () => {
-        console.log('Game ended...');
-        const endgameModal = document.createElement('div');
-		endgameModal.className = 'sund-game-end';
-		const endgameText = document.createElement('div');
-		endgameText.className = 'sund-game-end__text';
-		endgameText.innerText = 'Game Ended!'
-		const endgameRestart = document.createElement('button');
-		endgameRestart.className = 'sund-game-end__restart';
-		endgameRestart.innerText = 'Restart!';
-		document.body.appendChild(endgameModal);
-		endgameModal.append(endgameText, endgameRestart);
-		endgameRestart.addEventListener('click', () => {
-			document.body.removeChild(endgameModal);
-			restartGame(); 
-		});
-    };
-
-	const restartGame = () => {
-        console.log('Restarting the game...');
-        activePlayer = players[0];
-        gameboard.clearBoard();
-        gameScreen.updateBoard();
-		players.forEach(player => {
-			player.pickedCellsHistory = [];
-		});
-        printNewRound();
-    };
-
 	const printNewRound = () => {
 		gameboard.printBoard();
 		console.log(`${getActivePlayer().name}'s turn.`);
@@ -120,20 +91,6 @@ const game = (function() {
 
 	const playRound = (selectedCell) => {
 
-		// if(gameboard.dropToken(selectedCell, getActivePlayer()) !== 1){
-		// 	console.log(
-		// 		`Dropping ${getActivePlayer().name}'s token into cell with number ${selectedCell}...`
-		// 	);
-		// 	console.log('dropToken executed');
-		// 	switchPlayerTurn();
-		// 	printNewRound();
-		// } else{
-		// 	console.log('dropToken NOT executed');
-		// }
-
-
-		
-		
 		const pickedCell = gameboard.getBoard().flat().find((cell) => cell.cellIndex == selectedCell);
 	
 		if(pickedCell.cellContent.getValue() === ''){
@@ -175,12 +132,48 @@ const game = (function() {
 			console.log('No more available cells');
 			endGame();
 		}
+		
 	};
 
 	// Initial play game message
 	printNewRound();
-	// For the console version, we will only use playRound, but we will need
-	// getActivePlayer for the UI version, so I'm revealing it now
+
+	// creating end game modal, activating restart function and removing end game modal
+	const endGame = () => {
+        console.log('Game ended...');
+
+        const endgameModal = document.createElement('div');
+		endgameModal.className = 'sund-game-end';
+
+		const endgameText = document.createElement('div');
+		endgameText.className = 'sund-game-end__text';
+		endgameText.innerText = 'Game Ended!'
+
+		const endgameRestart = document.createElement('button');
+		endgameRestart.className = 'sund-game-end__restart';
+		endgameRestart.innerText = 'Restart!';
+
+		document.body.appendChild(endgameModal);
+		endgameModal.append(endgameText, endgameRestart);
+		endgameRestart.addEventListener('click', () => {
+			document.body.removeChild(endgameModal);
+			restartGame(); 
+		});
+    };
+
+	// restaring the game while resetting all needed params
+	const restartGame = () => {
+        console.log('Restarting the game...');
+        activePlayer = players[0];
+        gameboard.clearBoard();
+        gameScreen.updateBoard();
+		players.forEach(player => {
+			player.pickedCellsHistory = [];
+		});
+        printNewRound();
+    };
+
+
 	return {
 		playRound,
 		getActivePlayer,
@@ -188,42 +181,71 @@ const game = (function() {
 		restartGame
 	};
 })()
+// /game module pattern
 
-
+// screen interaction module pattern
 const gameScreen = (function(){
+
+	// selectiong gameboard and div where players turn will be showing
     const screenBoard = document.querySelector('#sund-gameboard');
     const screenOrder = document.querySelector('.sund-screen__order');
    
+
     const updateBoard = function(){
        
+		// clearing the board on screen to draw updated version
 		screenBoard.textContent = "";
 
+		// taking board object from gameboard module pattern
 		const board = gameboard.getBoard();
+
+		// taking activePlayer object from gameboard module pattern
 		const activePlayer = game.getActivePlayer();
+
+		// Printing on the screen what player turn it is
 		screenOrder.innerText = `It is time for ${activePlayer.name}'s turn`;
 
+		// for board object from gameboard module pattern we draw html board on the screen
         board.forEach(row => {
             row.forEach(cell => {
                 const boardCell = document.createElement('div');
                 boardCell.className ='board__cell';
-                // boardCell.setAttribute('data-index', index);
+
+				// taking number from board object [cellIndex] and giving it to our cell data-index
+                // boardCell.setAttribute('data-index', cell.cellIndex);
                 // or
                 boardCell.dataset.index = cell.cellIndex;
+
+				// for our cell content ('x', 'o', or empty) we take from board object [cellContent]
                 boardCell.innerText = cell.cellContent.getValue();
+
+				// adding created cell to screen board
                 screenBoard.appendChild(boardCell); 
             });
          });
     }
+
+	// initial instance of drawing gameboard
     updateBoard();
 
+	// adding 'click' event on gameboard on screen
     function clickHandler(e){
+
+		// when clicking on gameboard we are selecting (e.target)  
+		// the html element inside gameboard where we are directly clicking
+		// and in this element we catch data-index number (data-index="1")
         const selectedCell = e.target.dataset.index;
+
+		// this data-index of selectedCell (for example cell with data-index="1" will send "1")
+		// into game module pattern into playround
         game.playRound(selectedCell);
+
+		// after game.playRound(selectedCell) finished we draw new board
         updateBoard();
     }
     screenBoard.addEventListener('click', clickHandler)
     
 	return {updateBoard}
 })()
-
+// /screen interaction module pattern
 
