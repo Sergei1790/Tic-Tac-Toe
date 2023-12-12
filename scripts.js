@@ -1,5 +1,7 @@
 // Making variables for the screens
 const round = document.querySelector('#round');
+const player1Name = document.querySelector('#player1-name');
+const player2Name = document.querySelector('#player2-name');
 const player1Score = document.querySelector('#player1-score');
 const player2Score = document.querySelector('#player2-score');
 
@@ -75,14 +77,21 @@ function createPlayer(name, token) {
 	const pickedCellsHistory = [];
 	return { name, token, pickedCellsHistory};
 }
-const el1 = createPlayer('Elromco 1', 'x');
-const el2 = createPlayer('Elromco 2', 'o');
+const player1 = createPlayer('Serg', 'x');
+const player2 = createPlayer('Elen', 'o');
+
+// Show player names on screen
+player1Name.innerText = player1.name;
+player2Name.innerText = player2.name;
 
 // game module pattern
 const game = (function() {
 	
-	const players = [el1, el2];
+	const players = [player1, player2];
 	let activePlayer = players[0];
+	
+	// Variable that we will use ti check if there any cell where we can place' x' or 'o'
+	let availableCells = '';
 
 	const switchPlayerTurn = () => {
 		activePlayer = activePlayer === players[0] ? players[1] : players[0];
@@ -134,7 +143,6 @@ const game = (function() {
 				for (let winCondition of winConditions) {
 					if(winCondition === pickedCellsHistorySorted) {
 						console.log('WIIIIIIIIIIIIIIIIN!');
-
 						// increasing number of game rounds on the screen div#round
 						round.textContent++; 
 						// or -  round.textContent = (parseInt(round.textContent, 10) + 1); 
@@ -161,7 +169,7 @@ const game = (function() {
 
 		// Checking if there any cell where we can place' x' or 'o'
 		// if no more availableCells - finish the game
-		const availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
+		availableCells = gameboard.getBoard().flat().filter((cell) => cell.cellContent.getValue() === '');
 		console.log('availableCells', availableCells.length);
 		if(!availableCells.length){
 			console.log('No more available cells');
@@ -181,20 +189,31 @@ const game = (function() {
         const endgameModal = document.createElement('div');
 		endgameModal.className = 'sund-game-end';
 
+		const endgameModalOverlay = document.createElement('div');
+		endgameModalOverlay.className = 'sund-game-end__overlay';
+
 		const endgameText = document.createElement('div');
 		endgameText.className = 'sund-game-end__text';
-		endgameText.innerText = 'Game Ended!'
+		if(!availableCells.length){
+			endgameText.innerText = `Game Ended! It is a Draw!`
+		} else{
+			endgameText.innerText = `Game Ended! ${activePlayer.name} Won!`
+		}
+		
+		
 
 		const endgameRestart = document.createElement('button');
 		endgameRestart.className = 'sund-game-end__restart';
 		endgameRestart.innerText = 'Restart!';
 
-		document.body.appendChild(endgameModal);
+		document.body.append(endgameModalOverlay, endgameModal);
 		endgameModal.append(endgameText, endgameRestart);
 		endgameRestart.addEventListener('click', () => {
 			document.body.removeChild(endgameModal);
+			document.body.removeChild(endgameModalOverlay);
 			restartGame(); 
 		});
+		return { endgameText }
     };
 
 	// restaring the game while resetting all needed params
