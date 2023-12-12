@@ -2,10 +2,13 @@ body{
     margin: 0;
     font-family: 'Open Sans', sans-serif;
 }
-.score{
+.round{
     font-size: 24px;
 }
 .sund-screen__order{
+    font-size: 24px;
+}
+.sund-players{
     font-size: 24px;
 }
 #sund-gameboard{
