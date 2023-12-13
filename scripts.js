@@ -30,7 +30,7 @@ const gameboard = (function() {
 
 		// We are adding corresponding cell.cellIndex to player object in order 
 		// to save history of his turn to check if he win or not after last 'x' or 'o' placement
-		player.pickedCellsHistory.push(pickedCell.cellIndex);
+		player.pickedCellsHistory+=pickedCell.cellIndex;
 	};
 
 	// This method will be used to print our board to the console.
@@ -131,25 +131,32 @@ const game = (function() {
 				// 123
 				// 456
 				// 789 (this 3 rows is a board)
-				const winConditions = ['123', '456', '789', '147', '258', '369', '159', '357'];
+				const winConditions = [
+					['1', '2', '3'],
+					['4', '5', '6'],
+					['7', '8', '9'],
+					['1', '4', '7'],
+					['2', '5', '8'],
+					['3', '6', '9'],
+					['1', '5', '9'],
+					['3', '5', '7']
+				];
 				console.log(getActivePlayer().name, 'player.pickedCellsHistory ', getActivePlayer().pickedCellsHistory);
-
-				// as player can drop token not in format 1-2-3, but also 2-1-3 or 3-1-2 etc
-				// we sort pickedCellsHistory from less to more (2-1-3 or 3-1-2 will be sorted to 1-2-3)
-				pickedCellsHistorySorted = getActivePlayer().pickedCellsHistory.sort(function(a, b) { return a - b; }).join('');
-				console.log({pickedCellsHistorySorted});
-
-				// checking if pickedCellsHistory = winConditions and if player won or continue game
+				
+				// as player can drop token not in format 1-2-3, but also 2-1-4-3 or 3-1-2-9 etc
+				// checking if wincondition placements (1,2,3) are present in
+				// getActivePlayer().pickedCellsHistory ((1,6,3,4,2) for example) 
+				// and if player won or continue game
 				for (let winCondition of winConditions) {
-					if(winCondition === pickedCellsHistorySorted) {
+					// Check if all elements in winCondition are present in getActivePlayer().pickedCellsHistory
+					if (winCondition.every(cell => getActivePlayer().pickedCellsHistory.includes(cell))) {
 						console.log('WIIIIIIIIIIIIIIIIN!');
 						// increasing number of game rounds on the screen div#round
-						round.textContent++; 
+						round.textContent++;
 						// or -  round.textContent = (parseInt(round.textContent, 10) + 1); 
 
 						// checking what player won and adding his win to corresponding win span
 						const scoreElement = activePlayer === players[0] ? player1Score : player2Score;
-
 						scoreElement.textContent++;
 						// or - scoreElement.textContent = (parseInt(scoreElement.textContent, 10) + 1);
 
