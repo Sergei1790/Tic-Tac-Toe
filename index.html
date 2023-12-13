@@ -5,22 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body> 
-    <div class="sund-round">
-        Round  <span id="round">1</span> 
-    </div>
-    <div class="sund-players">
-        <div>
-            <span id="player1-name"></span>
-            <span id="player1-score">0</span>
+    <div class="sund-game-info">
+        <div class="sund-round">
+            Round  <span id="round">1</span> 
         </div>
-        <div>
-            <span id="player2-name"></span>
-            <span id="player2-score">0</span>
+        <div class="sund-players">
+            <div>
+                <span id="player1-name"></span>
+                <span class="player-score" id="player1-score">0</span>
+            </div>
+            <span>-</span>
+            <div>
+                <span class="player-score" id="player2-score">0</span>
+                <span id="player2-name"></span>
+            </div>
         </div>
+        <div class="sund-screen__order"></div>
     </div>
-    <div class="sund-screen__order"></div>
     <div id="sund-gameboard">
 
     </div>
